@@ -496,4 +496,77 @@ function drawTerrain() {
             if (t == 6) { // パワーアップ
                 const time = Date.now() * 0.02;
                 g.save();
-                g.translate
+                g.translate(sx + 8, sy + 8);
+                g.rotate(time);
+                g.fillStyle = '#FF69B4';
+                g.beginPath();
+                g.arc(0, 0, 8, 0, Math.PI * 2);
+                g.fill();
+                g.restore();
+            }
+        }
+    }
+}
+
+function drawPlayer() {
+    const sx = player.x - camX;
+    g.fillStyle = player.powered ? '#FFD700' : '#FF0000';
+    g.fillRect(sx, player.y, player.w, player.h);
+}
+
+let lastTime = 0;
+function gameLoop(timestamp) {
+    const dt = timestamp - lastTime;
+    lastTime = timestamp;
+
+    const moveLeft = keys['ArrowLeft'] || keys['a'] || touchControls.left;
+    const moveRight = keys['ArrowRight'] || keys['d'] || touchControls.right;
+    const jumping = keys[' '] || keys['ArrowUp'] || touchControls.jump;
+    const dashing = keys['Shift'] || touchControls.dash;
+
+    const speed = dashing ? DASH_SPD : SPD;
+    if (moveLeft) {
+        player.dx = -speed;
+        player.dir = -1;
+    } else if (moveRight) {
+        player.dx = speed;
+        player.dir = 1;
+    } else {
+        player.dx *= FRI;
+    }
+
+    if (jumping && !player.air) {
+        player.dy = dashing ? DASH_JUMP : JUMP;
+        player.air = true;
+        createParticle(player.x + player.w / 2, player.y + player.h, 'jump');
+        playSound('jump', player.x, player.y);
+    }
+
+    player.dy += GRAV * dt;
+    collideRectMap(player);
+
+    camX = clamp(player.x - CAM_W / 2, 0, W * TZ - CAM_W);
+    if (camShake > 0) {
+        camShake *= 0.9;
+        camX += (Math.random() - 0.5) * camShake;
+    }
+
+    drawBackground();
+    drawTerrain();
+    drawPlayer();
+
+    requestAnimationFrame(gameLoop);
+}
+
+function resizeCanvas() {
+    const scale = Math.min(window.innerWidth / CAM_W, window.innerHeight / CAM_H);
+    cv.style.width = `${CAM_W * scale}px`;
+    cv.style.height = `${CAM_H * scale}px`;
+}
+
+window.addEventListener('resize', resizeCanvas);
+
+document.addEventListener('DOMContentLoaded', () => {
+    resizeCanvas();
+    requestAnimationFrame(gameLoop);
+});

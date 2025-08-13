@@ -64,8 +64,10 @@ canvas {
   background: #87CEEB;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   image-rendering: pixelated;
+  width: 100%;
   max-width: 100%;
   height: auto;
+  touch-action: none;
 }
 
 /* タッチコントロール */
