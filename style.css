@@ -51,9 +51,10 @@ html, body {
 #game-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-  padding: 20px 0;
+  align-items: flex-start;
+  height: 75vh;
+  padding: 0;
+  overflow-x: auto;
 }
 
 /* キャンバス */
@@ -64,9 +65,9 @@ canvas {
   background: #87CEEB;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   image-rendering: pixelated;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
+  height: 100%;
+  width: auto;
+  max-width: none;
   touch-action: none;
 }
 
@@ -328,7 +329,7 @@ canvas {
 /* 横向きスマートフォン対応 */
 @media (max-width: 768px) and (orientation: landscape) {
   #game-container {
-      min-height: 30vh;
+      height: 75vh;
       padding: 10px 0;
   }
   

@@ -559,14 +559,16 @@ function gameLoop(timestamp) {
 }
 
 function resizeCanvas() {
-    const scale = Math.min(window.innerWidth / CAM_W, window.innerHeight / CAM_H);
+    const height = window.innerHeight * 0.75;
+    const scale = height / CAM_H;
+    cv.style.height = `${height}px`;
     cv.style.width = `${CAM_W * scale}px`;
-    cv.style.height = `${CAM_H * scale}px`;
 }
 
 window.addEventListener('resize', resizeCanvas);
 
 document.addEventListener('DOMContentLoaded', () => {
+    generateStage(currentStage, currentWorld);
     resizeCanvas();
     requestAnimationFrame(gameLoop);
 });
