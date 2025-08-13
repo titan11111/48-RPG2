@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミニマリオゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="hud">
+        <div class="hud-item">
+            <span class="icon">🪙</span>
+            <span id="coin">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">⏰</span>
+            <span id="time">400</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">❤️</span>
+            <span id="lives">3</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">⭐</span>
+            <span id="score">0</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">🏰</span>
+            <span id="stage">1-1</span>
+        </div>
+        <div class="hud-item">
+            <span class="icon">💣</span>
+            <span id="bombs">0</span>
+        </div>
+    </div>
+    
+    <div id="game-container">
+        <canvas id="cv" width="800" height="240"></canvas>
+    </div>
+    
+    <!-- スマートフォン用のタッチボタン -->
+    <div id="touch-controls">
+        <div class="control-row">
+            <button id="btn-left" class="control-btn move-btn">
+                <span>◀</span>
+            </button>
+            <button id="btn-right" class="control-btn move-btn">
+                <span>▶</span>
+            </button>
+        </div>
+        <div class="control-row">
+            <button id="btn-jump" class="control-btn jump-btn">
+                <span>🚀</span>
+                <small>ジャンプ</small>
+            </button>
+            <button id="btn-dash" class="control-btn dash-btn">
+                <span>💨</span>
+                <small>ダッシュ</small>
+            </button>
+            <button id="btn-bomb" class="control-btn bomb-btn">
+                <span>💣</span>
+                <small>爆弾</small>
+            </button>
+        </div>
+    </div>
+    
+    <!-- ゲーム説明 -->
+    <div id="instructions">
+        <h3>🎮 スーパーマリオアドベンチャー v2.0</h3>
+        <div class="controls-info">
+            <div class="control-section">
+                <h4>🖥️ パソコン操作</h4>
+                <p><kbd>←</kbd><kbd>→</kbd> 移動　<kbd>Space</kbd><kbd>↑</kbd> ジャンプ　<kbd>Shift</kbd> ダッシュ　<kbd>X</kbd> 爆弾　<kbd>R</kbd> リスタート</p>
+            </div>
+            <div class="control-section">
+                <h4>📱 スマートフォン操作</h4>
+                <p>画面下のボタンをタッチして操作しよう！</p>
+            </div>
+        </div>
+        <div class="game-features">
+            <div class="feature">
+                <span class="feature-icon">🪙</span>
+                <div>
+                    <strong>コインを集めよう</strong>
+                    <p>黄色いコインを集めてスコアアップ！100枚で1UP！</p>
+                </div>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🌸</span>
+                <div>
+                    <strong>花パワー！</strong>
+                    <p>ピンクの花を取ると爆弾が3個もらえる！敵に投げよう！</p>
+                </div>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">👹</span>
+                <div>
+                    <strong>様々な敵</strong>
+                    <p>クリボー、トゲ敵、飛行敵、ジャンプ敵！それぞれ違う動きをするよ！</p>
+                </div>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🏁</span>
+                <div>
+                    <strong>ステージクリア</strong>
+                    <p>旗に触って次のステージへ！全ステージクリアを目指そう！</p>
+                </div>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">💨</span>
+                <div>
+                    <strong>ダッシュで爽快感</strong>
+                    <p>ダッシュボタンで高速移動＆高ジャンプ！</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
