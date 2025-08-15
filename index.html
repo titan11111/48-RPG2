@@ -1,121 +1,189 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ミニヒーローゲーム</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>レトロ・アクション（安全スポーン版）</title>
+<style>
+  html,body{margin:0;background:#0b0b16;color:#fff;font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif}
+  #wrap{position:relative;max-width:960px;margin:0 auto;background:#000}
+  canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+  .hud{position:absolute;left:8px;top:6px;font-weight:700;text-shadow:0 2px 0 #000, 2px 0 #000, -2px 0 #000, 0 -2px #000}
+  .pad{position:absolute;bottom:8px;left:8px;display:flex;gap:8px;opacity:.9;touch-action:none}
+  .btn{width:68px;height:68px;border-radius:10px;background:#222;border:3px solid #666;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .btn:active{transform:translateY(2px);background:#111}
+  .ab{position:absolute;right:8px;bottom:8px;display:flex;gap:12px}
+  .btn span{font-size:22px}
+  #diag{position:absolute;left:8px;top:30px;font-size:12px;white-space:pre-line;pointer-events:none;text-shadow:0 2px 0 #000, 2px 0 #000, -2px 0 #000, 0 -2px #000}
+  @media (min-width: 860px){ .btn{width:72px;height:72px} }
+</style>
 </head>
 <body>
-    <div id="hud">
-        <div class="hud-item">
-            <span class="icon">🪙</span>
-            <span id="coin">0</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">⏰</span>
-            <span id="time">400</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">❤️</span>
-            <span id="lives">3</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">⭐</span>
-            <span id="score">0</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">🏰</span>
-            <span id="stage">1-1</span>
-        </div>
-        <div class="hud-item">
-            <span class="icon">💣</span>
-            <span id="bombs">0</span>
-        </div>
-    </div>
-    
-    <div id="game-container">
-        <canvas id="cv" width="800" height="240"></canvas>
-    </div>
-    
-    <!-- スマートフォン用のタッチボタン -->
-    <div id="touch-controls">
-        <div class="control-row">
-            <button id="btn-left" class="control-btn move-btn">
-                <span>◀</span>
-            </button>
-            <button id="btn-right" class="control-btn move-btn">
-                <span>▶</span>
-            </button>
-        </div>
-        <div class="control-row">
-            <button id="btn-jump" class="control-btn jump-btn">
-                <span>🚀</span>
-                <small>ジャンプ</small>
-            </button>
-            <button id="btn-dash" class="control-btn dash-btn">
-                <span>💨</span>
-                <small>ダッシュ</small>
-            </button>
-            <button id="btn-bomb" class="control-btn bomb-btn">
-                <span>💣</span>
-                <small>爆弾</small>
-            </button>
-        </div>
-    </div>
-    
-    <!-- ゲーム説明 -->
-    <div id="instructions">
-        <h3>🎮 スーパーヒーローアドベンチャー v2.0</h3>
-        <div class="controls-info">
-            <div class="control-section">
-                <h4>🖥️ パソコン操作</h4>
-                <p><kbd>←</kbd><kbd>→</kbd> 移動　<kbd>Space</kbd><kbd>↑</kbd> ジャンプ　<kbd>Shift</kbd> ダッシュ　<kbd>X</kbd> 爆弾　<kbd>R</kbd> リスタート</p>
-            </div>
-            <div class="control-section">
-                <h4>📱 スマートフォン操作</h4>
-                <p>画面下のボタンをタッチして操作しよう！</p>
-            </div>
-        </div>
-        <div class="game-features">
-            <div class="feature">
-                <span class="feature-icon">🪙</span>
-                <div>
-                    <strong>コインを集めよう</strong>
-                    <p>黄色いコインを集めてスコアアップ！100枚で1UP！</p>
-                </div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">🌸</span>
-                <div>
-                    <strong>花パワー！</strong>
-                    <p>ピンクの花を取ると爆弾が3個もらえる！敵に投げよう！</p>
-                </div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">👹</span>
-                <div>
-                    <strong>様々な敵</strong>
-                    <p>クリボー、トゲ敵、飛行敵、ジャンプ敵！それぞれ違う動きをするよ！</p>
-                </div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">🏁</span>
-                <div>
-                    <strong>ステージクリア</strong>
-                    <p>旗に触って次のステージへ！全ステージクリアを目指そう！</p>
-                </div>
-            </div>
-            <div class="feature">
-                <span class="feature-icon">💨</span>
-                <div>
-                    <strong>ダッシュで爽快感</strong>
-                    <p>ダッシュボタンで高速移動＆高ジャンプ！</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="wrap">
+  <canvas id="game" width="640" height="360"></canvas>
+  <div class="hud" id="hud"></div>
+  <div id="diag">STATUS: booting…</div>
+  <div class="pad">
+    <div class="btn" data-key="ArrowLeft"><span>◀︎</span></div>
+    <div class="btn" data-key="ArrowRight"><span>▶︎</span></div>
+  </div>
+  <div class="ab">
+    <div class="btn" data-key="KeyZ"><span>A</span></div>
+    <div class="btn" data-key="KeyX"><span>B</span></div>
+  </div>
+</div>
 
-    <script src="script.js"></script>
+<script>
+(() => {
+  const diag = (msg) => document.getElementById('diag').textContent = msg;
+  window.onerror = (m,src,lin,col,err)=>{diag('ERROR: '+m+'\\n'+(err&&err.stack?err.stack:''));};
+
+  const cvs = document.getElementById('game');
+  const ctx = cvs.getContext('2d');
+  const HUD = document.getElementById('hud');
+  const W = cvs.width, H = cvs.height, TS = 32;
+  const C = { bg:'#0b0b16', star:'#7bd3ff', solid:'#9aa3ff', solidEdge:'#c7ccff', crate:'#F39C12', spike:'#ffdd99', spikeEdge:'#ffcc66', coin:'#fff17a', coinEdge:'#ffe24a', playerHair:'#5b3a1e', playerSkin:'#ffd1a6', playerShirt:'#3da5ff'};
+
+  // 0=空 1=床 2=トゲ 3=コイン 4=木箱
+  const MAP = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,1],
+    [1,0,0,0,4,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,1,1,0,0,0,0,0,0,0,3,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+  ];
+  const levelWidth = MAP[0].length * TS;
+  const levelHeight = MAP.length * TS;
+
+  const keys = new Set(); let coins = 0; let hearts = 3;
+  const player = {x:64, y:64, w:18, h:26, vx:0, vy:0, onGround:false, facing:1, inv:0};
+  let lastSafe = {x:64, y:64};
+
+  // 入力
+  window.addEventListener('keydown', e => keys.add(e.code));
+  window.addEventListener('keyup', e => keys.delete(e.code));
+  for (const b of document.querySelectorAll('.btn')) {
+    const k = b.dataset.key;
+    const on = () => keys.add(k);
+    const off = () => keys.delete(k);
+    b.addEventListener('touchstart', e => {e.preventDefault(); on();});
+    b.addEventListener('touchend', e => {e.preventDefault(); off();});
+    b.addEventListener('mousedown', on);
+    b.addEventListener('mouseup', off);
+    b.addEventListener('mouseleave', off);
+  }
+
+  function inBounds(tx,ty){ return ty>=0 && ty<MAP.length && tx>=0 && tx<MAP[0].length; }
+  function getTile(tx,ty){ return inBounds(tx,ty) ? MAP[ty][tx] : 1; }
+  function tileAt(px, py){ return getTile(Math.floor(px/TS), Math.floor(py/TS)); }
+  function tileSolid(v){ return v===1 || v===4; }
+
+  // 安全なスポーン位置を探索（空で下が固体）
+  function findSpawn(){
+    for (let x=1;x<MAP[0].length-1;x++){
+      for (let y=1;y<MAP.length-1;y++){
+        if (getTile(x,y)===0 && tileSolid(getTile(x, y+1))){
+          return {x: x*TS + 7, y: y*TS - 26};
+        }
+      }
+    }
+    return {x:64, y:64};
+  }
+  const spawn = findSpawn();
+  player.x = spawn.x; player.y = spawn.y;
+  lastSafe = {x: player.x, y: player.y};
+
+  function rectVsSolid(nx, ny, w, h){
+    let x = nx, y = ny, onGround = false;
+    if (tileSolid(tileAt(x, y)) || tileSolid(tileAt(x+w-1, y)) || tileSolid(tileAt(x, y+h-1)) || tileSolid(tileAt(x+w-1, y+h-1))){
+      const step = Math.sign(player.vx) || (nx>player.x?1:-1);
+      while (tileSolid(tileAt(x, y)) || tileSolid(tileAt(x+w-1, y)) || tileSolid(tileAt(x, y+h-1)) || tileSolid(tileAt(x+w-1, y+h-1))) x -= step;
+      player.vx = 0;
+    }
+    if (tileSolid(tileAt(x, y)) || tileSolid(tileAt(x+w-1, y)) || tileSolid(tileAt(x, y+h-1)) || tileSolid(tileAt(x+w-1, y+h-1))){
+      const step = Math.sign(player.vy) || (ny>player.y?1:-1);
+      while (tileSolid(tileAt(x, y)) || tileSolid(tileAt(x+w-1, y)) || tileSolid(tileAt(x, y+h-1)) || tileSolid(tileAt(x+w-1, y+h-1))) y -= step;
+      if (player.vy > 0) onGround = true;
+      player.vy = 0;
+    }
+    return {x, y, onGround};
+  }
+
+  const cam = {x:0};
+  function updateCam(){ const target = player.x + player.w/2 - W/2; cam.x += (target - cam.x) * 0.15; cam.x = Math.max(0, Math.min(levelWidth - W, cam.x)); }
+
+  function damage(){ if (player.inv>0) return; hearts--; player.inv = 60; if (hearts<=0){ respawn(); hearts = 3; coins = 0; } }
+  function respawn(){ player.x = lastSafe.x; player.y = lastSafe.y; player.vx = 0; player.vy = 0; }
+
+  function AABB(ax,ay,aw,ah,bx,by,bw,bh){ return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by; }
+
+  function step(){
+    const spd = 1.4;
+    if (keys.has('ArrowLeft')) { player.vx -= spd; player.facing = -1; }
+    if (keys.has('ArrowRight')){ player.vx += spd; player.facing = 1; }
+    player.vx *= 0.85;
+    if ((keys.has('Space') || keys.has('KeyZ')) && player.onGround){ player.vy = -5.2; player.onGround = false; }
+    if (keys.has('KeyX')) player.vx *= 1.12;
+    player.vy += 0.25; if (player.vy > 8) player.vy = 8;
+
+    let nx = player.x + player.vx, ny = player.y + player.vy;
+    let fix = rectVsSolid(nx, player.y, player.w, player.h); nx = fix.x;
+    fix = rectVsSolid(nx, ny, player.w, player.h); ny = fix.y; player.onGround = fix.onGround;
+    player.x = nx; player.y = ny;
+
+    if (player.onGround) lastSafe = {x:player.x, y:player.y};
+    if (player.y > levelHeight + 64) respawn();
+
+    const cx = Math.floor((player.x+player.w/2)/TS), cy = Math.floor((player.y+player.h/2)/TS);
+    for (let oy=-1; oy<=1; oy++) for (let ox=-1; ox<=1; ox++){
+      const tx=cx+ox, ty=cy+oy;
+      if (!inBounds(tx,ty)) continue;
+      const t = MAP[ty][tx];
+      if (t===3){
+        const rx = tx*TS+8, ry=ty*TS+8, rw=16, rh=16;
+        if (AABB(player.x,player.y,player.w,player.h, rx,ry,rw,rh)){ coins++; MAP[ty][tx] = 0; }
+      } else if (t===2){
+        const rx = tx*TS, ry=ty*TS, rw=TS, rh=TS;
+        if (AABB(player.x,player.y,player.w,player.h, rx+2,ry+8,rw-4,rh-6)) damage();
+      }
+    }
+
+    if (player.inv>0) player.inv--;
+    updateCam(); draw();
+    requestAnimationFrame(step);
+  }
+
+  function drawTile(x,y,t){
+    if (t===1){ ctx.fillStyle = C.solid; ctx.fillRect(x,y,TS,TS); ctx.fillStyle = C.solidEdge; ctx.fillRect(x,y,TS,4); }
+    else if (t===4){ ctx.fillStyle = C.crate; ctx.fillRect(x+2,y+2,TS-4,TS-4); }
+    else if (t===2){ ctx.fillStyle = C.spike; const base = y+TS-2;
+      for(let i=0;i<TS;i+=8){ ctx.beginPath(); ctx.moveTo(x+i, base); ctx.lineTo(x+i+4, y+6); ctx.lineTo(x+i+8, base); ctx.closePath(); ctx.fill(); }
+      ctx.fillStyle = C.spikeEdge; ctx.fillRect(x, base, TS, 2); }
+    else if (t===3){ ctx.fillStyle = C.coin; ctx.beginPath(); ctx.arc(x+TS/2,y+TS/2,7,0,Math.PI*2); ctx.fill(); }
+  }
+
+  function drawPlayer(px,py){
+    if (player.inv>0 && (player.inv>>2)%2===0) return;
+    ctx.fillStyle = C.playerShirt; ctx.fillRect(px+2, py+10, 14, 12);
+    ctx.fillStyle = C.playerSkin; ctx.fillRect(px+4, py, 10, 10);
+    ctx.fillStyle = C.playerHair; ctx.fillRect(px+4, py, 10, 3);
+    ctx.fillStyle = '#000'; ctx.fillRect(px+(player.facing===1?11:5), py+4, 2, 2);
+  }
+
+  function sky(){ ctx.fillStyle = C.bg; ctx.fillRect(0,0,W,H); ctx.fillStyle = C.star; for (let i=0;i<40;i++){ const x = (i*157 % levelWidth) - cam.x; const y = (i*97 % H); if (x>=-2 && x<=W+2) ctx.fillRect(x, y, 2, 2); } }
+
+  function draw(){ sky(); ctx.save(); ctx.translate(-cam.x, 0); for (let y=0;y<MAP.length;y++){ for (let x=0;x<MAP[0].length;x++){ const t = MAP[y][x]; if (t!==0) drawTile(x*TS,y*TS,t); } } drawPlayer(player.x, player.y); ctx.restore(); HUD.textContent = `RUNNING  ♥${'❤'.repeat(hearts)}  Coin:${coins}`; }
+
+  diag('STATUS: initialized');
+  draw(); requestAnimationFrame(step);
+})();
+</script>
 </body>
 </html>
